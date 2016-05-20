@@ -1,0 +1,191 @@
+A locale is “a place representing a country, language, or culture.”
+
+The process in which we adapt the software to the local language and customs is known as localization. 
+A locale represents a country’s distinctive assemblage of language, culture, numbers, currency, etc.
+
+Localization does not just mean displaying text for a locale—it can also mean using audio or video clips for a locale. Furthermore, aspects
+related to displaying date or time or using local currencies also need to be considered
+
+Do not hardcode text (s • uch as messages to the users, textual elements in GUIs, etc.) and
+separate them into external files or dedicated classes. Wit
+• Handle cultural-specific aspects such as date, time, currency, and formatting numbers with
+localization in mind. 
+
+static Locale[] getAvailableLocales() Returns a list of available locales (i.e., installed locales) supported by the JVM.
+static Locale getDefault() Returns the default locale of the JVM.
+static void setDefault(Locale newLocale) Sets the default locale of the JVM.
+String getCountry() Returns the country code for the locale object.
+String getDisplayCountry() Returns the country name for the locale object.
+String getLanguage() Returns the language code for the locale object.
+String getDisplayLanguage() Returns the language name for the locale object.
+
+
+There are four different kinds of locale codes in this output:
+Just one co • de, as in the last entry shown above: hu for Hungarian.
+• Two codes separated by underscore, as in the first locale shown, ms_MY, where ms stands for
+Malaysia and MY stands for Malay.
+• Three codes separated by underscores, as in no_NO_NY where no stands for Norway, NO for
+Norwegian, and NY for Nynorsk.
+• Two or three initial codes separated by underscores and the final one by # or _#, as in
+th_TH_TH_#u-nu-thai, which we’ll discuss now. Here is how these locale names are encoded:
+language + "_" + country + "_" + (variant + "_#" | "#") + script + "-" + extensions
+For the locale code of th_TH_TH_#u-nu-thai,
+• The language code is th (Thai) and it is always written in lowercase.
+• The country code is TH (Thailand) and it is always written in uppercase.
+• The variant name is TH; here it repeats the country code, but it could be any string.
+• The script name is an empty string here; if given, it will be a four-letter string with the first
+letter in uppercase and the rest in lowercase (e.g., Latn).
+• The extension follows the # or _# character; it is u-nu-thai in this example.
+
+In Java, resource bundles provide a solution to this problem of how to customize the application to locale-specific
+needs. So, what is a resource bundle? A resource bundle is a set of classes or property files that help define a set of keys
+and map those keys to locale specific values.
+
+Default bundle is named ResourceBundle.properties.
+If you forget to create property files or they are not in the path, you will get a MissingResourceException.
+The keyname is case sensitive and the key name should exactly match—or else you’ll get a MissingResourceException
+
+For the resource bundles implemented as classes extended from ListResourceBundles, Java uses the
+reflection mechanism to find and load the class. You need to make sure that the class is PUBLIC so that
+the reflection mechanism will find the class.
+
+A fully qualified resource bundle has the following form:
+packagequalifier.bundlename + "_" + language + "_" + country + "_" + (variant + "_#" | "#") + script + "-" + extensions
+
+If at any step the search finds a match, the resource bundle is loaded. Otherwise, the search proceeds to the
+next step.
+• Step 1: The search starts by looking for an exact match for the resource bundle with the full
+name.
+• Step 2: The last component (the part separated by _) is dropped and the search is repeated
+with the resulting shorter name. This process is repeated till the last locale modifier is left.
+• Step 3: The search is restarted using the full name of the bundle for the default locale.
+• Step 4: Search for the resource bundle with just the name of the bundle.
+• Step 5: The search fails, throwing a MissingBundleException.
+
+BundleName + "_" + language + "_" + country + "_" + variant
+BundleName + "_" + language + "_" + country
+BundleName + "_" + language
+BundleName + "_" + defaultLanguage + "_" + defaultCountry
+BundleName + "_" + defaultLanguage
+
+The getBundle() method takes a ResourceBundle.Control object as an additional parameter.
+By extending this ResourceBundle.Control class and passing the instance of that extended class to
+the getBundle() method, you can change the default resource bundle search process or read from
+non-standard resource bundle formats (such as XML files).
+
+NumberFormat
+
+String format(double number) 
+String format(long number)
+Formats the number according to the NumberFormat’s locale. The first two overloaded methods use an implicit
+StringBuffer, whereas the last two use an explicit StringBuffer to build the String.
+
+Number parse(String source) Parses the number from the given String. It returns a Long or Double instance depending on the value of the number given
+in source. Throws a ParseException if the parse fails.
+
+static Locale[] getAvailableLocales() Returns the list of the locales supported by the Java runtime for number formatting.
+
+static NumberFormat getInstance() Factory method that returns a NumberFormat object for the default locale.
+
+Currency getCurrency() Returns the currency instance used by this NumberFormat object. 
+
+static NumberFormat getCurrencyInstance() Returns the instance of NumberFormat suitable for currency formatting purposes; an overloaded version of this method
+takes a Locale as an argument.
+
+static NumberFormat getIntegerInstance() Returns the instance of NumberFormat suitable for use for formatting integer numbers; an overloaded version of this
+method takes a Locale as an argument.
+
+static NumberFormat getPercentInstance() Returns the instance of NumberFormat suitable for use for formatting for percentages; an overloaded version of this
+method takes a Locale as an argument.
+
+Currency
+
+int getNumericCode() Returns ISO 4217 numeric code for the currency.
+
+int getDefaultFractionDigits() Returns the default number of digits used with the currency, such as zero for the Japanese Yen and two for the US Dollar.
+
+String getDisplayName() Returns the readable description of the Currency for the underlying locale, for example, US Dollar.
+
+String getDisplayName(Locale) Returns the readable description of the Currency for the given locale.
+
+static Currency getInstance(String currencyCode) Returns the Currency object corresponding to the given currency code.
+
+static Currency getInstance(Locale locale) Returns the Currency object corresponding to the given Locale object.
+
+static Set < Currency > getAvailableCurrencies() Get the list of Currency instances available in the JDK.
+
+String getSymbol() Returns the currency symbol, if any; otherwise, returns the currency code.
+
+String getSymbol(Locale) Returns the currency symbol for the given Locale object.
+
+String getCurrencyCode() Returns the currency code
+
+DATEFORMAT
+
+String format(Date date) Formats the given date for the default locale and returns a textual representation. Its overloaded version takes a StringBuffer and
+position as arguments and returns a StringBuffer object; useful if an existing StringBuffer needs to be formatted for date.
+
+Date parse(String source) Reads the given String according to the default locale conventions to return a Date object; throws ParseException if it fails. It has an
+overloaded version that takes ParsePosition (the position from which to parse the String) as an additional argument.
+
+String format(Date date) Formats the given date for the default locale and returns a textual
+representation.
+
+static Locale[] getAvailableLocales() Returns an array of Locales that are supported by the Java runtime for date/time formatting.
+
+static DateFormat getInstance() Returns the default DateFormat instance that supports both date and time; it uses DateFormat.SHORT style for both date and time.
+
+static DateFormat getDateInstance() Returns the DateFormat instance suitable for processing dates for default locale; its two overloaded versions take style and Locale
+as additional arguments.
+
+static DateFormat getTimeInstance() Returns the DateFormat instance suitable for processing time for a default locale; its two overloaded versions take style and
+Locale as additional arguments.
+
+static DateFormat getDateTimeInstance() Returns the DateFormat instance suitable for processing both date and time for a default locale; its two overloaded versions take
+style and Locale as additional arguments.
+
+G Era (BC/AD)
+y Year
+Y Week year
+M Month (in year)
+w Week (in year)
+W Week (in month)
+D Day (in year)
+d Day (in month)
+F Day of week in month
+E Day name in week
+u Day number of week (value range 1-7)
+
+a Marker for the text am/pm marker
+H Hour (value range 0-23)
+k Hour (value range 1-24)
+K Hour in am/pm (value range 0-11)
+h Hour in am/pm (value range 1-12)
+m Minute
+s Second
+S Millisecond
+z Time zone (general time zone format)
+
+Here are some pointers that might prove useful on your exam:
+• There are many ways to get or create a Locale object. We list four options here for creating an
+instance of Italian locale that corresponds to the language code of it.
+Option 1: Use the constructor of the Locale class: Locale(String language, String
+country, String variant):
+Locale locale1 = new Locale("it", "", "");
+Option 2: Use the forLanguageTag(String languageTag) method in the Locale class:
+Locale locale2 = Locale.forLanguageTag("it");
+Option 3: Build a Locale object by instantiating Locale.Builder and then call
+setLanguageTag() from that object:
+Locale locale3 = new Locale.Builder().setLanguageTag("it").build();
+Option 4: Use the predefined static final constants for locales in the Locale class:
+Locale locale4 = Locale.ITALIAN;
+You can choose the way to create a Locale object based on your need. For example, the Locale class has
+only a few predefined constants for locales. If you want a Locale object from one of the predefined ones, you can
+straightaway use it, or you’ll have to check which other option to use.
+• Instead of calling Locale’s getDisplayCountry() method, which takes no arguments, you can
+choose the overloaded version of getDisplayCountry(Locale), which takes a Locale object
+as an argument. This will print the name of the country as in the passed locale. For example,
+for the call Locale.GERMANY.getDisplayCountry(), you’ll get the output “Deutschland”
+(that’s how Germans refer to their country); however, for the call Locale.GERMANY.
+getDisplayCountry(Locale.ENGLISH), you’ll get the output “Germany” (that’s how British
+refer to the country name Germany).

@@ -1,0 +1,37 @@
+Console console = System.console();
+
+To text
+BufferedReader
+InputStreamReader
+FileReader
+
+BufferedWriter
+OutputStreamWriter
+FileWriter
+
+FileReader inputFile = new FileReader(file);
+BufferedReader inputFile = new BufferedReader(new FileReader(file));
+BufferedWriter outputFile = new BufferedWriter(new FileWriter(dstFile));
+
+To tokenizer a text:
+Scanner tokenizingScanner = new Scanner(new FileReader(fileName));
+tokenizingScanner.useDelimiter("\\W");
+	while(tokenizingScanner.hasNext()) {
+		String word = tokenizingScanner.next();
+
+To bytes
+
+InputStream
+BufferedInputStream,
+FileInputStream
+DataInputStream 
+
+OutputStream
+BufferedOutputStream
+FileOutputStream
+DataOutputStream
+
+FileInputStream fis = new FileInputStream(fileName);
+BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName));
+DataOutputStream dos = new DataOutputStream(new FileOutputStream("temp.data"));
+ObjectInputStream ois = new ObjectInputStream(new FileInputStream("object.data")); //To serialization

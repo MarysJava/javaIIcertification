@@ -1,0 +1,235 @@
+PRESTAR ATENÇÃO - PEGADINHA COM || NO MULTI CATCH
+
+To hide or swallow an
+exception by catching an exception and doing nothing is really a bad practice.
+
+Static initialization blocks cannot throw any checked exceptions. Non-static initialization
+blocks can throw checked exceptions; however, all the constructors should declare that
+exception in their throws clause.
+
+When providing multiple catch handlers, handle specific exceptions before handling general exceptions.
+If you provide a derived class exception catch handler after a base class exception handler, your code will
+not compile.
+
+In a multi-catch block, you cannot combine catch handlers for two exceptions that share a base- and
+derived-class relationship. You can only combine catch handlers for exceptions that do not share the
+parent-child relationship between them.
+
+IllegalStateException gets thrown because of a programming mistake when you call the nextInt() method after
+calling the close() method on Scanner.
+
+If a class implements java.io.Closeable, then you must call the close() method of that class; otherwise, it will result in a resource leak.
+
+The garbage collector (GC) is responsible for releasing only memory resources. If you are using any class
+that acquires system resources, it is your responsibility to release them by calling the close() method
+on that object.
+
+If you call System.exit() inside a method, it will abnormally terminate the program. so, if the calling
+method has a finally block, it will not be called and resources may leak. For this reason, it is a bad
+programming practice to call System.exit() to terminate a program.
+
+SE TEM RETURN NO FINALLY É ELE QUE SEMPRE RETORNA!
+
+To be usable with a try-with-resources statement, the class of that resource must implement the java.lang.AutoCloseable interface.
+This interface declares one single method named close().
+
+Posso ter try-with sem nada ou com finally explícito
+Tenho que declarar as variáveis dentro do () do try
+
+This AutoCloseable interface was also
+introduced in Java 7, and the interface is made of the base interface of the Closeable interface. This is to make sure
+that the existing resource classes work seamlessly with a try-with-resources statement. In other words, you can use all
+old stream classes with try-with-resources because they implement the AutoCloseable interface.
+
+You can use more than one resource in a try-with-resources statement.
+
+Because you can use multiple resources within a try-with-resources statement, the possibility
+of more than one exception getting thrown from the try block and the finally block is high.
+If a try block throws an exception, and a finally block also throws exception(s), then the
+exceptions thrown in the finally block will be added as suppressed exceptions to the exception
+that gets thrown out of the try block to the caller.
+
+In a try-with-resources statement, there might be more than one exception that could get thrown; for example,
+one within the try block, one within the catch block, and another one within the finally block. However, only one
+exception can be caught, so the other exception(s) will be listed as suppressed exceptions. From a given exception
+object, you can use the method getSuppressed() to get the list of suppressed exceptions.
+
+It is a bad practice to explicitly call the close() method inside a try-with-resource statement.
+
+try, catch, multi-catch, finally, and try-with-resources blocks.
+
+If you have some code that can throw a checked exception from a method, you can choose between the
+two alternatives. You can either handle that exception by providing a catch block or declare that method
+to throw that exception. If you don’t catch or declare the method to throw that exception, your code
+won’t compile.
+
+it is optional to handle unchecked exceptions.
+Catching a runtime exception such as ArrayIndexOutOfBoundsException is a bad practice!
+It is a good practice to perform defensive checks and avoid raising unnecessary runtime exceptions.
+
+CHECKED EXCEPTIONS
+CloneNotSupportedException Thrown when the clone() method is invoked on an object whose class
+does not implement a Cloneable interface.
+
+IOException Thrown when an Input/Output operation fails (say because of an
+interrupted call).
+
+EOFException Thrown when end-of-file (EOF) is reached unexpectedly; subclass of
+IOException.
+
+FileNotFoundException Thrown when the runtime is not able to locate or open the given file;
+derived class of IOException.
+
+ReflectiveOperationException Thrown when a reflection operation fails; superclass of reflection
+related exceptions such as NoSuchMethodException and InvocationTargetException.
+
+RuntimeException Superclass of unchecked exceptions (discussed in the next section in this
+chapter).
+
+SQLException Thrown when a database access or related operations fail; superclass of
+database-related exceptions such as SerialException.
+
+ParseException Thrown when the parsing fails (for example, while processing localesensitive
+information such as dates and times in the Format class).
+
+RUNTIME EXCEPTIONS
+ArithmeticException Thrown when arithmetic errors occur, such as attempting to divide by zero.
+
+BufferOverflowException, BufferUnderflowException Thrown for an attempt to write beyond a buffer’s limits.
+
+ClassCastException Thrown when an attempt is made to cast between incompatible types (such
+as String to Integer type or vice versa).
+
+NegativeArraySizeException Thrown when an attempt is made to create an array of negative size.
+
+NoSuchElementException Thrown when an attempt is made to use the nextElement() method on an
+Enumeration when no more values exist to access.
+
+NullPointerException When an attempt is made to de-reference through a null reference.
+
+UnsupportedOperationException Thrown when an attempt is made to apply an operation that is not supported
+or that does not exist (for example, attempting to write to a read-only file
+system will result in throwing a ReadOnlyFileSystemException, which is a
+derived class of this exception).
+
+IllegalArgumentException Thrown when an incorrect or inappropriate argument is passed to a method.
+
+IndexOutOfBoundsException Thrown when an attempt is made to access the data structure using
+an index value that is not within the permissible range; base class of
+ArrayIndexOutOfBoundsException and StringIndexOutOfBoundsException.
+
+Exceptions of type Error indicate an abnormal condition in the program. There is no point in catching this
+exception and trying to continue execution and pretending nothing has happened. It is a really bad
+practice to do so!
+
+ERRORS
+
+AssertionError Thrown when an assertion fails (discussed later in this chapter).
+
+IOError Thrown when a serious I/O error occurs.
+
+VirtualMachineError Thrown when the JVM itself enters an erroneous state (due to a bug) or when the JVM
+runs out of resources (such as memory).
+
+OutOfMemoryError Thrown when the JVM cannot allocate memory anymore; a derived class of
+VirtualMachineError.
+
+LinkageError Thrown when the linking performed by the JVM fails (for example, due to a circular
+class hierarchy in which case the ClassCircularityError will be thrown, which is a derived class of LinkageError).
+
+NoClassDefFoundError Thrown when attempting to load the definition of a class when the class loader cannot
+find that class.
+
+StackOverflowError Thrown when the application has a non-terminating recursive call, or when the
+application makes too many function calls that the JVM cannot handle; a derived class of VirtualMachineError.
+
+If a method does not have a throws clause, it does not mean it cannot throw any exceptions; it
+just means it cannot throw any checked exceptions.
+• It is a good practice to use the @throws JavaDoc tag to document the specific situations or cases
+in which an exception (both checked and unchecked) might be thrown from the method.
+• It is a bad practice to use a throws clause to list unchecked exceptions that a method may
+throw. Why? Since the compiler cannot force the callers to handle unchecked exceptions,
+it does not make sense to list them in the throws clause. Rather, if a method can throw an
+unchecked exception, it is better to use the @throws clause to document that possibility.
+• Static initialization blocks cannot thr • ow any checked exceptions. Why? Remember that static
+initialization blocks are invoked when the class is loaded, so there is no way to handle the
+thrown exceptions in the caller. Further, there is no way to declare the checked exceptions in a
+throws clause.
+• Non-static initialization blocks can throw checked exceptions; however, all the constructors
+should declare those exceptions in their throws clause. Why? The compiler merges the code
+for non-static initialization blocks and constructors during its code generation phase, hence
+the throws clause of the constructor can be used for declaring the checked exceptions that
+a non-static initialization block can throw.
+• An overriding method cannot declare more exceptions in the throws clause than the list of
+exceptions declared in the throws clause of the base method. Why? The callers of the base
+method see only the list of the exceptions given in the throws clause of that method and will
+declare or handle these checked exceptions in their code (and not more than that).
+• An overriding method can declare more specific exceptions than the exception(s) listed in the
+throws clause of the base method; in other words, you can declare derived exceptions in the
+throws clause of the overriding method.
+• If a method is declared in two or more interfaces, and if that method declares to throw
+different exceptions in the throws clause, the implementation should list all of these
+exceptions.
+
+Custom exceptions should extend either the Exception or RuntimeException class. It is a bad practice
+to create custom exceptions by extending the Throwable or Error classes.
+
+The following statement invokes the toString() method of the InvalidInputException:
+System.out.println("The current caught exception is of type: " + iie);
+
+You did not override the toString() method, so the InvalidInputException class inherits the default
+implementation of the toString() method from the RuntimeException base class. This default toString() method
+prints the name of the exception thrown (InvalidInputException) and it also includes the detailed information
+string (“Invalid integer input typed in console”) that you passed while creating the exception object.
+
+ASSERTIONS
+
+The assert statement is used to check or test your assumptions about the program.
+The keyword assert provides support for assertions in Java. Each assertion statement contains a Boolean
+expression.
+
+If the result of the Boolean expression is true, it means the assumption is true, nothing happens.
+However, if the Boolean result is false, then the assumption you had about the program holds no more, and an
+AssertionError is thrown. Remember that the Error class and its derived classes indicate serious runtime errors and
+are not meant to be handled. In the same way, if an AssertionError is thrown, the best course of action is not to catch
+the exception and to allow the program to terminate. After that, you need to examine why the assumption did not hold
+true and then fix the program.
+
+There are many reasons why you should add assertions to the program. One reason is that it helps find the
+problems early; when you check your assumptions in the program, and when any of them fail, you immediately know
+where to look out for the problem and what to fix. Also, when other programmers read your code with assertions, they
+will be in a better position to understand the code because you are making your assumptions explicit using assertions.
+
+assert booleanExpression;
+assert booleanExpression : "Detailed error message string";
+
+It is a compiler error if a non-Boolean expression is used within the assert statement. 
+
+You need to use the –ea flag to enable assertions at runtime
+java -ea Program
+To disable assertions at runtime, use -da switch.
+Just use the command-line arguments when invoking the JVM to enable or disable them.
+
+Table 11-5. Important Command-Line Arguments for Enabling/Disabling Assertions
+Command-Line Argument Short Description
+-ea Enables assertions by default (except system classes).
+-ea:<class name> Enables assertions for the given class name.
+-ea:<package name>... Enables assertions in all the members of the given package <package name>.
+-ea:... Enable assertions in the given unnamed package.
+-esa Short for -enablesystemsassertions; enables assertions in system classes. This
+option is rarely used.
+-da Disable assertions by default (except system classes).
+-da:<class name> Disable assertions for the given class name.
+-ea:<package name>... Disables assertions in all the members of the given package <package name>.
+-da:... Disable assertions in the given unnamed package.
+-dsa Short for -disablesystemsassertions; disables assertions in system classes.
+This option is rarely used.
+
+• Don’t use assertions for validating input values or for validating arguments to public methods.
+For signaling such runtime failures, use exceptions instead.
+• Don’t use assertions to check conditions that are required for the correct functioning of
+the application. Since assertions are disabled by default at runtime, the application will not
+function correctly when the asserted conditions are not present in the code.
+• The Boolean expressions given inside assert statements should not have side effects—
+modifying variable values, printing values to console, etc. In other words, the functioning of
+the application should remain the same no matter if assertions are enabled or disabled.

@@ -1,0 +1,362 @@
+There are many classes in the java.util.concurrent package that provide high-level APIs for concurrent programming.
+These high-level abstractions for synchronizing activities of two or more threads are known as synchronizers. Synchronizers internally
+make use of the existing low-level APIs for thread coordination.
+The synchronizers provided in the java.util.concurrent library and their uses are listed here:
+• Semaphore controls access to one or more shared resources.
+• Phaser is used to support a synchronization barrier.
+• CountDownLatch allows threads to wait for a countdown to complete.
+• Exchanger supports exchanging data between two threads.
+• CyclicBarrier enables threads to wait at a predefined execution point.
+
+A semaphore controls access to shared resources.
+
+Access to the resource is allowed if the counter is greater than zero,while a zero
+value of the counter indicates that no resource is available at the moment and so the access is denied.
+The methods acquire() and release() are for acquiring and releasing resources from a semaphore. If a thread
+calls acquire() and the counter is zero (i.e., resources are unavailable), the thread waits until the counter is non-zero
+and then gets the resource for use. Once the thread is done using the resource, it calls release() to increment the
+resource availability counter.
+Note if the number of resources is 1, then at a given time only one thread can access the resource; in this case,
+using the semaphore is similar to using a lock.
+
+Semaphore(int permits) Constructor to create Semaphore objects with a given number of permits
+(the number of threads that can access the resource at a time). If the permit’s value is negative, the given number of release() calls must
+happen before acquire() calls can succeed.
+Semaphore(int permits, boolean fair)
+Same as the previous constructor, but this extra fair option indicates that the permits should be allotted on a first-come-first-served basis.
+void acquire()
+void acquire(int permits)
+Acquires a permit if available; otherwise, it blocks until a permit becomes available. Can throw an InterruptedException if some other thread
+interrupts it while waiting to acquire a permit. The overloaded version takes a number of permits as an argument.
+void acquireUninterruptibly()
+Same as the acquire() method, but this thread cannot be interrupted while waiting to acquire a permit.
+boolean tryAcquire()
+boolean tryAcquire(long timeout, TimeUnit unit)
+Acquires a permit from the semaphore if available at the time of the call and returns true; if unavailable, it returns false immediately (without
+blocking). The overloaded tryAcquire() method additionally takes a time-out argument—the thread blocks to acquire a permit from the
+semaphore until a given time-out period.
+void release()
+void release(int permits)
+Releases a permit from the semaphore. The overloaded version specifies the number of permits to release.
+
+CountDownLatch
+This synchronizer allows one or more threads to wait for a countdown to complete. This countdown could be for a set
+of events to happen or until a set of operations being performed in other threads completes. 
+
+CountDownLatch(int count) Creates an instance of CountDownLatch with the number of times the
+countDown() method must be called before the threads waiting with await()
+can continue execution.
+void await() If the current count in CountDownLatch object is zero, it immediately returns;
+otherwise, the thread blocks until the countdown reaches zero. Can throw an InterruptedException.
+boolean await(long timeout, TimeUnit unit)
+Same as the previous method, await(), but takes an additional time-out
+argument. If the thread returns successfully after the count reaches zero, this
+method returns true; if the thread returns because of time-out, it returns false.
+void countDown() Reduces the number of counts by one in this CountDownLatch object. If the
+count reaches zero, all the (a)waiting threads are released. If the current count
+is already zero, nothing happens.
+long getCount() Returns the pending counts in this CountDownLatch object.
+
+
+The Exchanger class is meant for exchanging data between two threads. What Exchanger does is something very
+simple: it waits until both the threads have called the exchange() method. When both threads have called the
+exchange() method, the Exchanger object actually exchanges the data shared by the threads with each other. This
+class is useful when two threads need to synchronize between them and continuously exchange data.
+This class is a tiny class with only one method: exchange(). Note that this exchange() method has an overloaded
+form where it takes a time-out period as an argument.
+
+There are many situations in concurrent programming where threads may need to wait at a predefined execution
+point until all other threads reach that point. CyclicBarrier helps provide such a synchronization point;
+
+CyclicBarrier(int numThreads) Creates a CyclicBarrier object with the number of threads waiting
+on it specified. Throws IllegalArgumentException if numThreads is negative or zero.
+CyclicBarrier(int parties, Runnable barrierAction)
+Same as the previous constructor; this constructor additionally takes
+the thread to call when the barrier is reached.
+int await()
+int await(long timeout, TimeUnit unit)
+Blocks until the specified number of threads have called await() on this barrier. The method returns the arrival index of this
+thread. This method can throw an InterruptedException if the thread is interrupted while waiting for other threads or a
+BrokenBarrierException if the barrier was broken for some reason
+(for example, another thread was timed-out or interrupted). The overloaded method takes a time-out period as an additional option;
+this overloaded version throws a TimeoutException if all other threads aren’t reached within the time-out period.
+boolean isBroken() Returns true if the barrier is broken. A barrier is broken if at least one
+thread in that barrier was interrupted or timed-out, or if a barrier action failed throwing an exception.
+void reset() Resets the barrier to the initial state. If there are any threads waiting
+on that barrier, they will throw the BrokenBarrier exception.
+
+Phaser
+Phaser is a useful feature when few independent threads have to work in phases to complete a task. So, a
+synchronization point is needed for the threads to work on a part of a task, wait for others to complete other part of
+the task, and do a sync-up before advancing to complete the next part of the task. Table 14-4 lists important methods
+in this class.
+
+Phaser() Creates a Phaser object with no registered parties and no parents. The
+initial phase is set to 0.
+Phaser(int numThreads) Creates a Phaser object with a given number of threads (parties) to arrive
+to advance to the next stage; the initial phase is set to 0.
+int register() Adds a new thread (party) to this Phaser object. Returns the phase
+current number. Throws an IllegalStateException if the maximum supported parties are already registered.
+int bulkRegister(int numThreads) Adds numThreads of unarrived parties to this Phaser object. Returns the
+phase current number. Throws an IllegalStateException if maximum
+supported parties are already registered.
+int arrive() Arrives at this phase without waiting for other threads to arrive. Returns
+the arrival phase number. Can throw an IllegalStateException.
+int arriveAndDeregister() Same as the previous method, but also deregisters from the Phaser object.
+int arriveAndAwaitAdvance() Arrive at this phase and waits (i.e., blocks) until other threads arrive.
+int awaitAdvance(int phase) Waits (i.e., blocks) until this Phaser object advances to the given phase value.
+int getRegisteredParties() Returns the number of threads (parties) registered with this Phaser object.
+int getArrivedParties() Returns the number of threads (parties) arrived at the current phase of the Phaser object.
+int getUnarrivedParties() Returns the number of threads (parties) that have not arrived when
+compared to the registered parties at the current phase of the Phaser object.
+
+
+Table 14-5. Some Concurrent Collection Classes in the java.util.concurrent Package
+Class/Interface Short Description
+BlockingQueue This interface extends the Queue interface. In BlockingQueue, if the queue is empty,
+it waits (i.e., blocks) for an element to be inserted, and if the queue is full, it waits for an element to be removed from the queue.
+ArrayBlockingQueue This class provides a fixed-sized array based implementation of the
+BlockingQueue interface.
+LinkedBlockingQueue This class provides a linked-list-based implementation of the BlockingQueue
+interface.
+DelayQueue This class implements BlockingQueue and consists of elements that are of type
+Delayed. An element can be retrieved from this queue only after its delay period.
+PriorityBlockingQueue Equivalent to java.util.PriorityQueue, but implements the BlockingQueue interface.
+SynchronousQueue This class implements BlockingQueue. In this container, each insert() by a thread
+waits (blocks) for a corresponding remove() by another thread and vice versa.
+LinkedBlockingDeque This class implements BlockingDeque where insert and remove operations could
+block; uses a linked-list for implementation.
+ConcurrentHashMap Analogous to Hashtable, but with safe concurrent access and updates.
+ConcurrentSkipListMap Analogous to TreeMap, but provides safe concurrent access and updates.
+ConcurrentSkipListSet Analogous to TreeSet, but provides safe concurrent access and updates.
+CopyOnWriteArrayList Similar to ArrayList, but provides safe concurrent access. When the ArrayList is
+updated, it creates a fresh copy of the underlying array.
+CopyOnWriteArraySet A Set implementation, but provides safe concurrent access and is implemented
+using CopyOnWriteArrayList. When the container is updated, it creates a fresh copy of the underlying array.
+
+The take() method will block until an element gets inserted by another thread; once inserted, the take() method will return that value.
+In other words, if you’re using a PriorityQueue object, you need to synchronize the threads such that insertion of an
+element always occurs before removing an element. However, in PriorityBlockingQueue, the order does not matter,
+and no matter which operation (insertion or removal of an element) is invoked first, the program works correctly. In
+this way, concurrent collections provide support for safe use of collections in the context of multiple threads without
+the need for you to perform explicit synchronization operations.
+
+The java.util.concurrent package has two subpackages: java.util.concurrent.atomic and java.util.concurrent.locks.
+
+• AtomicBoolean: Atomically updatable Boolean value.
+• AtomicInteger: Atomically updatable int value; inherits from the Number class.
+• AtomicIntegerArray: An int array in which elements can be updated atomically.
+• AtomicLong: Atomically updatable long value; inherits from Number class.
+• AtomicLongArray: A long array in which elements can be updated atomically.
+• AtomicReference<V>: An atomically updatable object reference of type V.
+• AtomicReferenceArray<E>: An atomically updatable array that can hold object references of
+type E (E refers to be base type of elements).
+
+Only AtomicInteger and AtomicLong extend from Number class but not AtomicBoolean. All other
+classes in the java.util.concurrent.atomic subpackage inherit directly from the Object class
+
+Table 14-6. Important Methods in the AtomicInteger Class
+Method Description
+AtomicInteger() Creates an instance of AtomicInteger with initial value 0.
+AtomicInteger(int initVal) Creates an instance of AtomicInteger with initial value initVal.
+int get() Returns the integer value held in this object.
+void set(int newVal) Resets the integer value held in this object to newVal.
+int getAndSet(int newValue) Returns the current int value held in this object and sets the value held in this object to newVal.
+boolean compareAndSet (int expect, int update)
+Compares the int value of this object to the expect value, and if they
+are equal, sets the int value of this object to the update value.
+int getAndIncrement() Returns the current value of the integer value in this object and
+increments the integer value in this object. Similar to the behavior
+of i++ where i is an int.
+int getAndDecrement() Returns the current value of the integer value in this object and
+decrements the integer value in this object. Similar to the behavior of i-- where i is an int.
+int getAndAdd(int delta) Returns the integer value held in this object and adds given delta value
+to the integer value.
+int incrementAndGet() Increments the current value of the integer value in this object and
+returns that value. Similar to the behavior of ++i where i is an int.
+int decrementAndGet() Decrements the current integer value in this object and returns that
+value. Similar to behavior of --i where i is an int.
+int addAndGet(int delta) Adds the delta value to the current value of the integer in this object
+and returns that value.
+int intValue()
+long longValue()
+float floatValue()
+doubleValue()
+
+Using a Lock object is similar to obtaining implicit locks using the synchronized keyword.
+The aim of both constructs is the same: to ensure that only one thread accesses a shared resource at a time. However, unlike the
+synchronized keyword, Locks also support the wait/notify mechanism along with its support for Condition objects.
+
+You can think of using synchronized for locking implicitly and using Lock objects for locking explicitly.
+
+The advantage of using the synchronized keyword (implicit locking) is that you don’t have to remember to
+release the lock in a finally block since, at the end of the synchronized block (or method), code will be generated
+to automatically release the lock. Although this is a useful feature, there are some situations where you may need to
+control the release of the lock manually (say, for releasing it other than at the end of that block), and Lock objects
+provide this flexibility. However, it is your responsibility to ensure that you release the lock in a finally block while
+using Lock objects.
+
+Using tryLock() helps avoid some of the thread synchronization-related problems discussed in the last chapter,
+such as deadlocks and livelocks.
+
+Table 14-7. Important Methods in the Lock Class
+Method Description
+void lock() Acquires the lock.
+boolean tryLock() Acquires the lock and returns true if the lock is available; if the lock is not
+available, it does not acquire  the lock and returns false.
+boolean tryLock(long time,TimeUnit unit)
+Same as the previous method tryLock(), but waits for the given waiting
+time before failing to acquire the lock and returns false.
+void lockInterruptibly() Acquires a lock; during the process of a acquiring the lock, if another
+thread interrupts it, this method throws an InterruptedException
+Condition newCondition() Returns a Condition object associated with this Lock object.
+void unlock() Releases the lock.
+
+
+The ReadWriteLock interface (which extends from the Lock interface) specifies a lock that provides
+separate locks for read-only access and write access. You can use the readLock( ) and writeLock( )
+methods to get instances of read and write locks, respectively. The ReentrantReadWriteLock class
+implements the ReadWriteLock interface.
+
+A Condition supports thread notification mechanism. When a certain condition is not satisfied, a thread can wait for another thread to satisfy that condition;
+that other thread could notify once the condition is met.
+
+that other thread could notify once the condition is met. A condition is
+bound to a lock. A Condition object offers three methods to support wait/notify pattern: await(), signal(), and
+signalAll(). These three methods are analogous to the wait(), notify(), and notifyAll() methods supported by
+the Object class.
+A thread can wait for a condition to be true using the await() method, which is an interruptible blocking call. If
+you want non-interruptible waiting, you can call awaitUninterruptibly(). You can also specify time duration for the
+waiting using one of the overloaded methods:
+• long awaitNanos(long nanosTimeout)
+• boolean await(long time, TimeUnit unit)
+• boolean awaitUntil(Date deadline)
+
+In multithreading, a common need is to wait for a condition to be satisfied by one thread before another
+thread can proceed. Using polling (i.e., repeatedly checking for a condition using a while loop) is a bad
+solution because this solution wastes CPU cycles; further, it is also prone to data races. Use guarded
+blocks using wait/notify or await/signal instead.
+
+You can directly create and manage threads in the application by creating Thread objects. However, if you want to
+abstract away the low-level details of multi-threaded programming, you can make use of the Executor interface.
+
+Both Runnable and Executor are similar in the sense that they provide a single method for implementation. In
+this definition you may have noticed that Exectutor by itself is not a thread, and you must create a Thread object
+to execute the Runnable object passed in the execute() method. However, the main difference between Runnable
+and Exectutor is that Executor is meant to abstract how the thread is executed. For example, depending on the
+implementation of Executor, Exectutor may schedule a thread to run at a certain time, or execute the thread after a
+certain delay period.
+
+Callable, Executors, ExecutorService, ThreadPool, and Future
+Callable is an interface that declares only one method: call(). Its full signature is V call() throws Exception. It
+represents a task that needs to be completed by a thread. Once the task completes, it returns a value. For some reason,
+if the call() method cannot execute or fails, it throws an Exception.
+To execute a task using the Callable object, you first create a thread pool. A thread pool is a collection of threads
+that can execute tasks. You create a thread pool using the Executors utility class. This class provides methods to get
+instances of thread pools, thread factories, etc.
+The ExecutorService interface implements the Executor interface and provides services such as termination of
+threads and production of Future objects. Some tasks may take considerable execution time to complete. So, when
+you submit a task to the executor service, you get a Future object.
+Future represents objects that contain a value that is returned by a thread in the future (i.e., it returns the value
+once the thread terminates in the “future”). You can use the isDone() method in the Future class to check if the task is
+complete and then use the get() method to fetch the task result. If you call the get() method directly while the task is
+not complete, the method blocks until it completes and returns the value once available.
+
+
+ThreadFactory is an interface that is meant for creating threads instead of explicitly creating threads by calling new
+Thread(). For example, assume that you often create high-priority threads. You can create a MaxPriorityThreadFactory
+to set the default priority of threads created by that factory to maximum priority.
+
+The ThreadLocalRandom Class
+When you do concurrent programming, you’ll find that there is often a need to generate random numbers.
+Using Math.random() is not efficient for concurrent programming. For this reason, the java.util.concurrent
+package introduces the ThreadLocalRandom class, which is suitable for use in concurrent programs. You can use
+ThreadLocalRandom.current() and then call methods such as nextInt() and nextFloat() to generate the
+random numbers.
+
+TimeUnit Enumeration
+You’ve already seen some methods earlier in this chapter that take TimeUnit as an argument. TimeUnit is an
+enumeration that is used to specify the resolution of the timing. The unit of time in TimeUnit can be one of DAYS,
+HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, or NANOSECONDS. The enumeration also has useful methods
+for converting between these time units. For example,
+System.out.printf("One day has %d hours, %d minutes, %d seconds",
+TimeUnit.DAYS.toHours(1), TimeUnit.DAYS.toMinutes(1), TimeUnit.DAYS.toSeconds(1));
+
+Use the Parallel Fork/Join Framework
+The Fork/Join framework in the java.util.concurrent package helps simplify writing parallelized code. The
+framework is an implementation of the ExecutorService interface and provides an easy-to-use concurrent platform
+in order to exploit multiple processors.
+This framework is very useful for modeling divide-and-conquer problems.
+This approach is suitable for tasks that can be divided recursively and computed on a smaller scale; the computed
+results are then combined. Dividing the task into smaller tasks is forking, and merging the results from the smaller
+tasks is joining.
+The Fork/Join framework uses the work-stealing algorithm: when a worker thread completes its work and is free,
+it takes (or “steals”) work from other threads that are still busy doing some work. Initially, it will appear to you that
+using Fork/Join is a complex task. Once you get familiar with it, however, you’ll realize that it is conceptually easy and
+that it significantly simplifies your job. The key is to recursively subdivide the task into smaller chunks that can be
+processed by separate threads.
+
+ForkJoinPool is the most important class in the Fork/Join framework. It is a thread pool
+for running fork/join tasks—it executes an instance of ForkJoinTask. It executes tasks and
+manages their lifecycle. Table 14-8 lists the important methods belonging to this abstract class.
+
+Table 14-8. Important Methods in the ForkJoinPool Class
+Method Description
+void execute(ForkJoinTask<?> task) Executes a given task asynchronously.
+<T> T invoke(ForkJoinTask<T> task) Executes the given task and returns the computed result.
+<T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+Executes all the given tasks and returns a list of future objects when all the tasks are completed.
+boolean isTerminated() Returns true if all the tasks are completed.
+int getParallelism()
+int getPoolSize()
+long getStealCount()
+Status checking methods.
+int getActiveThreadCount()
+<T> ForkJoinTask<T> submit(Callable<T> task)
+<T> ForkJoinTask<T> submit(ForkJoinTask<T> task)
+ForkJoinTask<?> submit(Runnable task)
+<T> ForkJoinTask<T> submit(Runnable task, T result)
+Executes a submitted task. Overloaded versions take different types of tasks; returns a Task object or a Future object.
+
+ForkJoinTask<V> is a lightweight thread-like entity representing a task that defines methods
+such as fork() and join(). Table 14-9 lists the important methods of this class.
+Table 14-9. Important Methods in the ForkJoinTask Class
+Method Description
+boolean cancel(boolean mayInterruptIfRunning) Attempts to cancel the execution of the task.
+ForkJoinTask<V> fork() Executes the task asynchronously.
+V join() Returns the result of the computation when the
+computation is done.
+V get() Returns the result of the computation; waits if the
+computation is not complete.
+V invoke() static <T extends ForkJoinTask<?>>
+Collection<T> invokeAll(Collection<T> tasks)
+Starts the execution of the submitted tasks; waits until computation complete, and returns results.
+boolean isCancelled() Returns true if the task is cancelled.
+boolean isDone() Returns true if the task is completed.
+• RecursiveTask<V> is a task that can run in a ForkJoinPool; the compute() method returns a
+value of type V. It inherits from ForkJoinTask.
+• RecursiveAction is a task that can run in a ForkJoinPool; its compute() method performs the
+actual computation steps in the task. It is similar to RecursiveTask, but does not return a value.
+
+First, c • heck whether the problem is suitable for the Fork/Join framework or not. Remember:
+the Fork/Join framework is not suitable for all kinds of tasks. This framework is suitable if your
+problem fits this description:
+• The problem can be designed as a recursive task where the task can be subdivided into
+smaller units and the results can be combined together.
+• The subdivided tasks are independent and can be computed separately without the need
+for communication between the tasks when computation is in process. (Of course, after
+the computation is over, you will need to join them together.)
+• If the problem you want to solve can be modeled recursively, then define a task class that
+extends either RecursiveTask or RecursiveAction. If a task returns a result, extend from
+RecursiveTask; otherwise extend from RecursiveAction.
+• Override the compute() method in the newly defined task class. The compute() method
+actually performs the task if the task is small enough to be executed; or split the task into
+subtasks and invoke them. The subtasks can be invoked either by invokeAll() or fork()
+method (use fork() when the subtask returns a value). Use the join() method to get the
+computed results (if you used fork() method earlier).
+• Merge the results, if computed from the subtasks.
+• Then instantiate ForkJoinPool, create an instance of the task class, and start the execution of
+the task using the invoke() method on the ForkJoinPool instance.
+• That’s it—you are done.
+
+threshold value = (data length size) / (number of available processors);
