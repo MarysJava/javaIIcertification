@@ -5,7 +5,7 @@ import java.nio.file.*;
 
 public class KeepAnEye {
 	public static void main(String[] args) {
-		Path path = Paths.get("C:\\workspace\\JavaIICertification\\src");
+		Path path = Paths.get("/var/www/html/sofiabresserbr");
 		WatchService watchService = null;
 		try {
 			watchService = path.getFileSystem().newWatchService();
