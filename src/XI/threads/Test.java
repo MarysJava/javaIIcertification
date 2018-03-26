@@ -2,7 +2,7 @@ package XI.threads;
 
 class ExtendThread extends Thread {
 	public void run() {
-		System.out.print(Thread.currentThread().getName());
+		System.out.println(Thread.currentThread().getName());
 	}
 }
 
