@@ -22,7 +22,7 @@ class MyFileVisitor extends SimpleFileVisitor<Path> {
 
 public class FileTreeWalk {
 	public static void main(String[] args) {
-		Path pathSource = Paths.get("C:\\workspace\\JavaIICertification\\src\\II");
+		Path pathSource = Paths.get("/var/www/html");
 		try {
 			Files.walkFileTree(pathSource, new MyFileVisitor());
 		} catch (IOException e) {
